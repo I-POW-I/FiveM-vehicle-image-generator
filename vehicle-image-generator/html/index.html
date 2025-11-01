@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>POW Vehicle Image Generator</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <svg class="icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" fill="black"/>
+            </svg>
+            <h1>POW Vehicle Image Generator</h1>
+            <button class="close-btn" id="closeBtn">✕</button>
+        </div>
+
+        <div class="content">
+            <!-- Discord Webhook Section -->
+            <div class="section">
+                <div class="section-header">
+                    <svg class="section-icon" viewBox="0 0 24 24" fill="none">
+                        <path d="M19.27 5.33C17.94 4.71 16.5 4.26 15 4C14.83 4.31 14.64 4.71 14.5 5.03C12.93 4.79 11.37 4.79 9.81 5.03C9.67 4.71 9.47 4.31 9.3 4C7.79 4.26 6.35 4.71 5.02 5.33C2.27 9.39 1.53 13.34 1.88 17.24C3.64 18.54 5.35 19.35 7.03 19.87C7.41 19.35 7.76 18.79 8.06 18.2C7.5 17.99 6.96 17.73 6.45 17.42C6.58 17.32 6.71 17.22 6.83 17.11C10.25 18.69 13.98 18.69 17.36 17.11C17.48 17.22 17.61 17.32 17.74 17.42C17.23 17.73 16.69 17.99 16.13 18.2C16.43 18.79 16.78 19.35 17.16 19.87C18.84 19.35 20.55 18.54 22.31 17.24C22.72 12.76 21.6 8.85 19.27 5.33ZM8.68 14.81C7.69 14.81 6.88 13.91 6.88 12.81C6.88 11.71 7.67 10.81 8.68 10.81C9.69 10.81 10.49 11.71 10.48 12.81C10.48 13.91 9.69 14.81 8.68 14.81ZM15.51 14.81C14.52 14.81 13.71 13.91 13.71 12.81C13.71 11.71 14.5 10.81 15.51 10.81C16.52 10.81 17.32 11.71 17.31 12.81C17.31 13.91 16.52 14.81 15.51 14.81Z" fill="white"/>
+                    </svg>
+                    <h2>Discord Webhook</h2>
+                </div>
+                <input type="text" id="webhookInput" placeholder="https://discord.com/api/webhooks/...">
+                <button class="test-btn" id="testWebhook">TEST WEBHOOK</button>
+            </div>
+
+            <!-- Vehicle Selection Section -->
+            <div class="section">
+                <div class="section-header">
+                    <svg class="section-icon" viewBox="0 0 24 24" fill="none">
+                        <path d="M18.92 6.01C18.72 5.42 18.16 5 17.5 5H15V3H9V5H6.5C5.84 5 5.28 5.42 5.08 6.01L3 12V20C3 20.55 3.45 21 4 21H5C5.55 21 6 20.55 6 20V19H18V20C18 20.55 18.45 21 19 21H20C20.55 21 21 20.55 21 20V12L18.92 6.01ZM6.5 16C5.67 16 5 15.33 5 14.5S5.67 13 6.5 13 8 13.67 8 14.5 7.33 16 6.5 16ZM17.5 16C16.67 16 16 15.33 16 14.5S16.67 13 17.5 13 19 13.67 19 14.5 18.33 16 17.5 16ZM5 11L6.5 6.5H17.5L19 11H5Z" fill="white"/>
+                    </svg>
+                    <h2>Vehicle Selection</h2>
+                </div>
+                <div class="vehicle-grid" id="vehicleGrid">
+                    <!-- Vehicles will be loaded here dynamically -->
+                </div>
+                <div class="select-buttons">
+                    <button class="select-all-btn" id="selectAll">SELECT ALL</button>
+                    <button class="deselect-all-btn" id="deselectAll">DESELECT ALL</button>
+                </div>
+            </div>
+
+            <!-- Control Buttons -->
+            <div class="control-buttons">
+                <button class="start-btn" id="startCapture">
+                    <span class="btn-icon">▶</span>
+                    START CAPTURE
+                </button>
+                <button class="stop-btn" id="stopCapture">
+                    <span class="btn-icon">■</span>
+                    STOP CAPTURE
+                </button>
+            </div>
+
+            <!-- Progress Section -->
+            <div class="progress-section" id="progressSection" style="display: none;">
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+                <div class="progress-text" id="progressText">0 / 0 vehicles captured</div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

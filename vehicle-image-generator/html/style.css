@@ -1,0 +1,380 @@
+/* ========================================
+   POW VEHICLE IMAGE GENERATOR - Style Sheet
+   ======================================== */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    background: transparent;
+    display: none;
+    min-height: 100vh;
+    padding: 20px;
+}
+
+body.visible {
+    display: block;
+}
+
+.container {
+    background: #161616;
+    border: 1px solid rgba(98, 5, 247, 0.274);
+    border-radius: 16px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
+    width: 100%;
+    max-width: 420px;
+    max-height: 90vh;
+    overflow: hidden;
+    animation: slideIn 0.3s ease-out;
+    position: fixed;
+    top: 20px;
+    right: 20px;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateX(400px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.header {
+    background: linear-gradient(135deg, #3c1263 0%, #085492 100%);
+    padding: 16px 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    border-bottom: 2px solid rgba(98, 5, 247, 0.274);
+    position: relative;
+}
+
+.header .icon {
+    width: 28px;
+    height: 28px;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+}
+
+.header h1 {
+    color: #c5c3c3;
+    font-size: 18px;
+    font-weight: 600;
+    flex: 1;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.close-btn {
+    background: rgba(255, 255, 255, 0.1);
+    border: none;
+    color: white;
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 18px;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.close-btn:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: scale(1.05);
+}
+
+.content {
+    padding: 20px;
+    max-height: calc(90vh - 64px);
+    overflow-y: auto;
+}
+
+.content::-webkit-scrollbar {
+    width: 8px;
+}
+
+.content::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 4px;
+}
+
+.content::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 4px;
+}
+
+.content::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+.section {
+    background: #19161f;
+    border: 1px solid rgba(98, 5, 247, 0.274);
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 16px;
+}
+
+.section-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 12px;
+}
+
+.section-icon {
+    width: 22px;
+    height: 22px;
+}
+
+.section-header h2 {
+    color: #a09f9f;
+    font-size: 15px;
+    font-weight: 600;
+}
+
+#webhookInput {
+    width: 100%;
+    padding: 12px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgb(110, 7, 245);
+    border-radius: 8px;
+    color: white;
+    font-size: 13px;
+    margin-bottom: 10px;
+    transition: all 0.2s;
+}
+
+#webhookInput::placeholder {
+    color: rgba(255, 255, 255, 0.5);
+}
+
+#webhookInput:focus {
+    outline: none;
+    border-color: #4e0a85;
+    background: rgba(255, 255, 255, 0.15);
+}
+
+.test-btn {
+    width: 100%;
+    padding: 10px;
+    background: #4b0783;
+    border: none;
+    border-radius: 8px;
+    color: white;
+    font-weight: 600;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.test-btn:hover {
+    background: #5e0459;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(88, 3, 158, 0.5);
+}
+
+.test-btn:active {
+    transform: translateY(0);
+}
+
+.vehicle-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+    margin-bottom: 12px;
+    max-height: 280px;
+    overflow-y: auto;
+    padding-right: 8px;
+}
+
+.vehicle-grid::-webkit-scrollbar {
+    width: 6px;
+}
+
+.vehicle-grid::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 3px;
+}
+
+.vehicle-grid::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 3px;
+}
+
+.vehicle-checkbox {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(98, 5, 247, 0.274);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.vehicle-checkbox:hover {
+    background: rgba(255, 255, 255, 0.12);
+    border-color: rgba(98, 5, 247, 0.274);
+}
+
+.vehicle-checkbox input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+    accent-color: #4b0783;
+}
+
+.vehicle-checkbox label {
+    color: white;
+    font-size: 12px;
+    cursor: pointer;
+    flex: 1;
+    user-select: none;
+}
+
+.select-buttons {
+    display: flex;
+    gap: 8px;
+}
+
+.select-all-btn,
+.deselect-all-btn {
+    flex: 1;
+    padding: 8px;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.select-all-btn {
+    background: #4b0783;
+    color: white;
+}
+
+.select-all-btn:hover {
+    background: #5e0459;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(88, 3, 158, 0.5);
+}
+
+.deselect-all-btn {
+    background: #4b0783;
+    color: white;
+    border: 1px solid rgba(98, 5, 247, 0.274);
+}
+
+.deselect-all-btn:hover {
+    background: #5e0459;
+    transform: translateY(-1px);
+}
+
+.control-buttons {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.start-btn,
+.stop-btn {
+    flex: 1;
+    padding: 14px;
+    border: none;
+    border-radius: 10px;
+    font-weight: 700;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.btn-icon {
+    font-size: 16px;
+}
+
+.start-btn {
+    background: linear-gradient(135deg, #0e5205 0%, #026e14 100%);
+    color: white;
+}
+
+.start-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(16, 185, 129, 0.6);
+}
+
+.start-btn:active {
+    transform: translateY(0);
+}
+
+.start-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.stop-btn {
+    background: linear-gradient(135deg, #971212 0%, #740707 100%);
+    color: white;
+}
+
+.stop-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(239, 68, 68, 0.6);
+}
+
+.stop-btn:active {
+    transform: translateY(0);
+}
+
+.stop-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.progress-section {
+    background: #19161f;
+    border: 1px solid rgba(6, 99, 55, 0.856);
+    border-radius: 12px;
+    padding: 16px;
+}
+
+.progress-bar {
+    width: 100%;
+    height: 8px;
+    background: rgba(7, 155, 81, 0.1);
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 8px;
+}
+
+.progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #8b5cf6 0%, #ec4899 100%);
+    border-radius: 4px;
+    transition: width 0.3s ease;
+    width: 0%;
+}
+
+.progress-text {
+    color: white;
+    font-size: 13px;
+    text-align: center;
+    font-weight: 500;
+}
