@@ -5,17 +5,13 @@ Config = {}
 Config.DefaultWebhook = '' -- Set a default webhook here to pre-fill the UI input field
 
 -- ** Vehicle Spawn Codes ** --
--- List your vehicle model names here (labels come from Config.ImportedVehicles below if defined)
+-- List your vehicle model names here.
 Config.VehicleSpawnCodes = {
     
     "gbargento7f", "gbbanshees", "gbcometcl", "gbcomets1t", "gbcomets2r",
     "gbirisz",
 }
 
--- ** Custom Labels for Imported Vehicles **
---Config.ImportedVehicles = {
-
---}
 
 -- ** Camera Settings **--
 Config.CameraSettings = {
@@ -34,4 +30,5 @@ Config.ScreenshotSettings = {
 
 -- ** Delay between captures (milliseconds) ** --
 Config.CaptureDelay = 5000 -- 5 seconds between each vehicle (prevents Discord rate limiting)
+
 
