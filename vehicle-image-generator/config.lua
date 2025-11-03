@@ -2,31 +2,28 @@ Config = {}
 
 -- ** Discord Webhook Configuration ** --
 -- Leave empty - YOU input a webhook in the UI when it's opened
-Config.DefaultWebhook = '' -- Set a default webhook here to pre-fill the UI input field
+Config.DefaultWebhook = 'https://discord.com/api/webhooks/1434029303368122403/NMemwODQK0txxyYEig0eEJSdeh9efuRgllF8xKWmnjo2JUo9a5P84MQu9jTXuKxxK5yP' -- Set a default webhook here to pre-fill the UI input field
 
 -- ** Vehicle Spawn Codes ** --
--- Just add your spawn codes here, one per line!
+-- List your vehicle model names here (labels come from Config.ImportedVehicles below if defined)
 Config.VehicleSpawnCodes = {
-    "adder",
-    "t20",
-    "zentorno",
-    -- etc...
+    
+    "gbargento7f", "gbbanshees", "gbcometcl", "gbcomets1t", "gbcomets2r",
+    "gbirisz",
 }
 
--- ** ADVANCED: If you want custom labels, use this instead:
--- Config.VehicleSpawnCodes = {
---     {model = "adder", label = "Truffade Adder"},
---     {model = "t20", label = "Progen T20"},
---     -- etc.
--- }
+-- ** Custom Labels for Imported Vehicles **
+--Config.ImportedVehicles = {
+
+--}
 
 -- ** Camera Settings **--
 Config.CameraSettings = {
-    coords = vector3(-75.5465, -818.4789, 326.1751), -- Where vehicles spawn
+    coords = vector3(-772.2191, 768.9974, 213.1987), -- Where vehicles spawn
     heading = 0.0, -- Vehicle heading
     cameraOffset = vector3(-3.0, 8.0, 1.4), -- Camera position, front-left elevated
     cameraRotation = vector3(-15.0, 0.0, 215.0), -- Camera angle, for front 3/4 view
-    fov = 32.5 -- Field of view
+    fov = 37.0 -- Field of view
 }
 
 -- ** Screenshot Settings ** --
