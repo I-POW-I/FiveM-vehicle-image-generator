@@ -22,10 +22,25 @@ TriggerEvent('chat:addSuggestion', '/vehui', 'Open Vehicle Image Generator UI (A
 -- Convert spawn codes to vehicle categories
 function ConvertSpawnCodesToCategories()
     local categories = {}
+    
+    if not Config or not Config.VehicleSpawnCodes then
+        print("^1[vehicle-image-generator]^7 ERROR: Config.VehicleSpawnCodes is not defined!")
+        return categories
+    end
+    
+    -- Create a lookup table for custom labels from ImportsVehicles
+    local customLabels = {}
+    if Config.ImportsVehicles then
+        for _, veh in ipairs(Config.ImportsVehicles) do
+            customLabels[veh.model] = veh.label
+        end
+    end
+    
+    print("^2[vehicle-image-generator]^7 Loading " .. #Config.VehicleSpawnCodes .. " vehicles from config")
     for i, vehicle in ipairs(Config.VehicleSpawnCodes) do
         if type(vehicle) == "string" then
-            -- Simple string format: just spawn code
-            local label = vehicle:sub(1,1):upper() .. vehicle:sub(2)
+            -- Priority: 1) Custom label from ImportsVehicles, 2) Capitalize first letter
+            local label = customLabels[vehicle] or (vehicle:sub(1,1):upper() .. vehicle:sub(2))
             table.insert(categories, {
                 id = vehicle,
                 label = label,
@@ -298,3 +313,4 @@ AddEventHandler('vehicle-image-generator:notify', function(message, type)
         })
     end
 end)
+
