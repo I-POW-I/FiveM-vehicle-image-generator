@@ -28,33 +28,18 @@ function ConvertSpawnCodesToCategories()
         return categories
     end
     
-    -- Create a lookup table for custom labels from ImportsVehicles
-    local customLabels = {}
-    if Config.ImportsVehicles then
-        for _, veh in ipairs(Config.ImportsVehicles) do
-            customLabels[veh.model] = veh.label
-        end
+    print("^2[vehicle-image-generator]^7 Loading " .. #Config.VehicleSpawnCodes .. " vehicles from config")
+    
+    -- Convert spawn codes to category entries with auto-generated labels
+    for i, spawnCode in ipairs(Config.VehicleSpawnCodes) do
+        local label = spawnCode:sub(1,1):upper() .. spawnCode:sub(2) -- Capitalize first letter
+        table.insert(categories, {
+            id = spawnCode,
+            label = label,
+            model = spawnCode
+        })
     end
     
-    print("^2[vehicle-image-generator]^7 Loading " .. #Config.VehicleSpawnCodes .. " vehicles from config")
-    for i, vehicle in ipairs(Config.VehicleSpawnCodes) do
-        if type(vehicle) == "string" then
-            -- Priority: 1) Custom label from ImportsVehicles, 2) Capitalize first letter
-            local label = customLabels[vehicle] or (vehicle:sub(1,1):upper() .. vehicle:sub(2))
-            table.insert(categories, {
-                id = vehicle,
-                label = label,
-                model = vehicle
-            })
-        elseif type(vehicle) == "table" then
-            -- Advanced format: {model = "adder", label = "Custom Name"}
-            table.insert(categories, {
-                id = vehicle.model,
-                label = vehicle.label or vehicle.model,
-                model = vehicle.model
-            })
-        end
-    end
     return categories
 end
 
