@@ -2,7 +2,7 @@ Config = {}
 
 -- ** Discord Webhook Configuration ** --
 -- Leave empty - YOU input a webhook in the UI when it's opened
-Config.DefaultWebhook = 'https://discord.com/api/webhooks/1434029303368122403/NMemwODQK0txxyYEig0eEJSdeh9efuRgllF8xKWmnjo2JUo9a5P84MQu9jTXuKxxK5yP' -- Set a default webhook here to pre-fill the UI input field
+Config.DefaultWebhook = '' -- Set a default webhook here to pre-fill the UI input field
 
 -- ** Vehicle Spawn Codes ** --
 -- List your vehicle model names here (labels come from Config.ImportedVehicles below if defined)
@@ -34,3 +34,4 @@ Config.ScreenshotSettings = {
 
 -- ** Delay between captures (milliseconds) ** --
 Config.CaptureDelay = 5000 -- 5 seconds between each vehicle (prevents Discord rate limiting)
+
