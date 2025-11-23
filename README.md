@@ -1,14 +1,16 @@
 # Vehicle Image Generator
 
-Capture vehicle images for your FiveM server with Discord webhooks.
+Capture vehicle screenshots for your FiveM server and upload them to Discord.
 
-![UI Preview](screenshots/ui-preview.png)
+![UI Preview](screenshots/preview.png)
+![UI Preview 2](screenshots/preview2.png)
 
-**What it does:**
-- Automatically captures vehicle screenshots
-- Uploads directly to Discord
-- Saves image URLs for use in vehicle shops
-- Bulk processing with progress tracking
+**Features:**
+- Takes screenshots of vehicles automatically
+- Uploads to Discord webhooks
+- Adjustable camera with sliders
+- Bulk capture with progress bar
+- Saves URLs to JSON file
 
 ## Setup ##
 
@@ -17,15 +19,15 @@ Capture vehicle images for your FiveM server with Discord webhooks.
 - `screenshot-basic` (included with FiveM)
 
 **1. Installation**
----
+```
 ensure screenshot-basic
 ensure vehicle-image-generator
----
+```
 
 **2. Admin Permission** (server.cfg)
----
+```
 add_ace group.admin command.vehui allow
----
+```
 
 **3. Add Vehicles** (config.lua)
 ```lua
@@ -34,45 +36,75 @@ Config.VehicleSpawnCodes = {
     "t20",
     "zentorno",
 }
----
+```
 
 **4. Restart server**
 
 ## Usage
 
-In-game, type `/vehui`
+Type `/vehui` in-game
 
-1. Paste Discord webhook URL
-2. Select vehicles
-3. Click START CAPTURE
-4. Done
+1. Paste your Discord webhook URL
+2. Adjust camera if needed (use the sliders)
+3. Select vehicles from the list
+4. Click START CAPTURE
+5. Wait for progress bar to finish
 
-Get webhook: Discord → Server Settings → Integrations → Webhooks
+## Camera Settings
+
+Click the Camera Settings header to expand. You can adjust:
+- Spawn position (X, Y, Z coords)
+- Vehicle rotation
+- Camera position/angle
+- FOV (zoom)
+
+Changes save automatically to config.lua
+
+## Why Download Images?
+
+**Don't use Discord URLs directly in your server.** Discord CDN links expire after a few hours/days (notice the `ex=` parameter). If you use them in your vehicle shop, all your images will break.
+
+**Solution:** Download the images and upload them to permanent hosting (GitHub, Imgur, your own website, etc.)
+
+## How to Download
+
+Right-click `download-images.ps1` and select "Run with PowerShell"
+
+Or open PowerShell and run:
+```
+cd vehicle-image-generator
+./download-images.ps1
+```
+
+This downloads all images from `vehicle-images.json` to the `downloaded-images` folder. Then upload those files to your hosting and use those permanent URLs in your shop config.
 
 ## Using the Images
 
-**Export method:**
+After uploading to permanent hosting, use the URLs in your vehicle shop:
+
+```lua
+{ model = 'adder', name = 'Adder', image = 'https://your-hosting.com/adder.webp' }
+```
+
+Or use the export:
 ```lua
 local imageUrl = exports['vehicle-image-generator']:GetVehicleImage('adder')
 ```
 
-**Or copy from vehicle-images.json:**
+vehicle-images.json format:
 ```json
 {
   "adder": {
     "imageUrl": "https://cdn.discordapp.com/...",
+    "model": "adder",
+    "label": "Adder"
   }
 }
 ```
 
-Use in your vehicle shop:
-```lua
-{ model = 'adder', name = 'Adder', image = 'https://cdn.discordapp.com/...' }
-```
-
 ## Configuration
 
-**Add your vehicles** in `config.lua`:
+Add your vehicles in `config.lua`:
 ```lua
 Config.VehicleSpawnCodes = {
     "adder",
@@ -81,19 +113,21 @@ Config.VehicleSpawnCodes = {
 }
 ```
 
-**Adjust camera** (optional):
+Change camera defaults (optional):
 ```lua
 Config.CameraSettings = {
-    coords = vector3(-40.0, -1101.0, 26.5),
+    spawnCoords = vector3(-40.0, -1101.0, 26.5),
     heading = 70.0,
-    fov = 50.0
+    cameraOffset = vector3(0.0, -8.0, 2.0),
+    fov = 50.0,
+    pointAtOffset = vector3(0.0, 0.0, 0.5)
 }
 ```
 
 ## Support
 
-**Issues?** Figure it out. xD   
-**Questions?** Check the config file - it's well documented
+Issues? Check the config file first.  
+Still stuck? Figure it out. xD
 
 ---
 
