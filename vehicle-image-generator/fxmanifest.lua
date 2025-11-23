@@ -4,7 +4,7 @@ lua54 'yes'
 
 author 'POW'
 description 'POW Vehicle Image Generator - Automatic vehicle screenshot capture with Discord webhook integration'
-version '1.0.0'
+version '1.3.0'
 
 ui_page 'html/index.html'
 
@@ -20,3 +20,4 @@ files {
 }
 
 dependency 'screenshot-basic'
+
