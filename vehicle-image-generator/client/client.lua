@@ -2,6 +2,9 @@ local isUIOpen = false
 local isCapturing = false
 local currentVehicle = nil
 local captureData = {}
+local previewVehicle = nil
+local previewCamera = nil
+local isPreviewMode = false
 
 -- Open UI (Admin only via ACE permissions)
 RegisterCommand('vehui', function()
@@ -11,7 +14,26 @@ RegisterCommand('vehui', function()
         SendNUIMessage({
             action = 'open',
             vehicles = ConvertSpawnCodesToCategories(),
-            webhook = Config.DefaultWebhook
+            webhook = Config.DefaultWebhook,
+            cameraSettings = {
+                coords = {
+                    x = Config.CameraSettings.coords.x,
+                    y = Config.CameraSettings.coords.y,
+                    z = Config.CameraSettings.coords.z
+                },
+                heading = Config.CameraSettings.heading,
+                cameraOffset = {
+                    x = Config.CameraSettings.cameraOffset.x,
+                    y = Config.CameraSettings.cameraOffset.y,
+                    z = Config.CameraSettings.cameraOffset.z
+                },
+                cameraRotation = {
+                    x = Config.CameraSettings.cameraRotation.x,
+                    y = Config.CameraSettings.cameraRotation.y,
+                    z = Config.CameraSettings.cameraRotation.z
+                },
+                fov = Config.CameraSettings.fov
+            }
         })
     end
 end, false)  -- false = normal command, restricted via ACE
@@ -62,7 +84,8 @@ RegisterNUICallback('startCapture', function(data, cb)
             webhook = data.webhook,
             vehicles = data.vehicles,
             currentIndex = 1,
-            total = #data.vehicles
+            total = #data.vehicles,
+            cameraSettings = data.cameraSettings or nil -- Use custom settings if provided
         }
         
         -- Make player invisible
@@ -88,6 +111,30 @@ end)
 
 RegisterNUICallback('stopCapture', function(data, cb)
     StopCapture()
+    cb('ok')
+end)
+
+RegisterNUICallback('startPreview', function(data, cb)
+    if not isPreviewMode then
+        StartPreviewMode(data.cameraSettings)
+    end
+    cb('ok')
+end)
+
+RegisterNUICallback('updatePreview', function(data, cb)
+    if isPreviewMode then
+        UpdatePreviewCamera(data.cameraSettings)
+    end
+    cb('ok')
+end)
+
+RegisterNUICallback('stopPreview', function(data, cb)
+    StopPreviewMode()
+    cb('ok')
+end)
+
+RegisterNUICallback('saveConfig', function(data, cb)
+    TriggerServerEvent('vehicle-image-generator:saveConfig', data.cameraSettings)
     cb('ok')
 end)
 
@@ -138,8 +185,11 @@ end
 -- Spawn and capture vehicle
 function SpawnAndCaptureVehicle(vehicleData)
     local playerPed = PlayerPedId()
-    local coords = Config.CameraSettings.coords
-    local heading = Config.CameraSettings.heading
+    
+    -- Use custom camera settings if provided, otherwise use config
+    local camSettings = captureData.cameraSettings or Config.CameraSettings
+    local coords = vector3(camSettings.coords.x, camSettings.coords.y, camSettings.coords.z)
+    local heading = camSettings.heading
     local modelHash = GetHashKey(vehicleData.model)
     
     -- Request model
@@ -178,23 +228,23 @@ function SpawnAndCaptureVehicle(vehicleData)
     DisplayRadar(false)
     DisplayHud(false)
     
-    -- Setup camera
+    -- Setup camera with custom or config settings
     local camera = CreateCameraWithParams(
         "DEFAULT_SCRIPTED_CAMERA",
-        coords.x + Config.CameraSettings.cameraOffset.x,
-        coords.y + Config.CameraSettings.cameraOffset.y,
-        coords.z + Config.CameraSettings.cameraOffset.z,
-        Config.CameraSettings.cameraRotation.x,
-        Config.CameraSettings.cameraRotation.y,
-        Config.CameraSettings.cameraRotation.z,
-        Config.CameraSettings.fov,
+        coords.x + camSettings.cameraOffset.x,
+        coords.y + camSettings.cameraOffset.y,
+        coords.z + camSettings.cameraOffset.z,
+        camSettings.cameraRotation.x,
+        camSettings.cameraRotation.y,
+        camSettings.cameraRotation.z,
+        camSettings.fov,
         true,
         2
     )
     
     SetCamActive(camera, true)
     RenderScriptCams(true, false, 0, true, true)
-    PointCamAtEntity(camera, currentVehicle, 0.0, 0.0, 0.0, true)
+    -- Don't use PointCamAtEntity - let rotation values control the camera angle
     
     -- Wait for everything to settle
     Citizen.Wait(500)
@@ -271,7 +321,18 @@ AddEventHandler('onResourceStop', function(resourceName)
         if currentVehicle and DoesEntityExist(currentVehicle) then
             DeleteEntity(currentVehicle)
         end
+        if previewVehicle and DoesEntityExist(previewVehicle) then
+            DeleteEntity(previewVehicle)
+        end
+        if previewCamera then
+            DestroyCam(previewCamera, false)
+        end
         RenderScriptCams(false, false, 0, true, true)
+        DisplayRadar(true)
+        DisplayHud(true)
+        local playerPed = PlayerPedId()
+        SetEntityVisible(playerPed, true, false)
+        SetEntityCollision(playerPed, true, true)
     end
 end)
 
@@ -298,4 +359,115 @@ AddEventHandler('vehicle-image-generator:notify', function(message, type)
         })
     end
 end)
+
+-- ========================================
+-- PREVIEW MODE FUNCTIONS
+-- ========================================
+
+-- Start preview mode with a test vehicle
+function StartPreviewMode(cameraSettings)
+    isPreviewMode = true
+    
+    local playerPed = PlayerPedId()
+    SetEntityVisible(playerPed, false, false)
+    
+    local coords = vector3(cameraSettings.coords.x, cameraSettings.coords.y, cameraSettings.coords.z)
+    local heading = cameraSettings.heading
+    local modelHash = GetHashKey('adder') -- Use adder as preview vehicle
+    
+    RequestModel(modelHash)
+    while not HasModelLoaded(modelHash) do
+        Citizen.Wait(100)
+    end
+    
+    -- Delete old preview vehicle if exists
+    if previewVehicle and DoesEntityExist(previewVehicle) then
+        DeleteEntity(previewVehicle)
+    end
+    
+    -- Create preview vehicle
+    previewVehicle = CreateVehicle(modelHash, coords.x, coords.y, coords.z, heading, false, false)
+    
+    while not DoesEntityExist(previewVehicle) do
+        Citizen.Wait(100)
+    end
+    
+    SetEntityAsMissionEntity(previewVehicle, true, true)
+    SetVehicleOnGroundProperly(previewVehicle)
+    FreezeEntityPosition(previewVehicle, true)
+    
+    -- Setup camera
+    UpdatePreviewCamera(cameraSettings)
+    
+    -- Hide HUD
+    DisplayRadar(false)
+    DisplayHud(false)
+    
+    print('^2[POW Vehicle Capture]^7 Preview mode started')
+end
+
+-- Update preview camera with new settings
+function UpdatePreviewCamera(cameraSettings)
+    if not isPreviewMode then return end
+    
+    local coords = vector3(cameraSettings.coords.x, cameraSettings.coords.y, cameraSettings.coords.z)
+    
+    -- Destroy old camera
+    if previewCamera then
+        DestroyCam(previewCamera, false)
+    end
+    
+    -- Create new camera with updated settings
+    previewCamera = CreateCameraWithParams(
+        "DEFAULT_SCRIPTED_CAMERA",
+        coords.x + cameraSettings.cameraOffset.x,
+        coords.y + cameraSettings.cameraOffset.y,
+        coords.z + cameraSettings.cameraOffset.z,
+        cameraSettings.cameraRotation.x,
+        cameraSettings.cameraRotation.y,
+        cameraSettings.cameraRotation.z,
+        cameraSettings.fov,
+        true,
+        2
+    )
+    
+    SetCamActive(previewCamera, true)
+    RenderScriptCams(true, false, 0, true, true)
+    
+    if previewVehicle and DoesEntityExist(previewVehicle) then
+        -- Update vehicle position if coords changed
+        SetEntityCoords(previewVehicle, coords.x, coords.y, coords.z, false, false, false, true)
+        SetEntityHeading(previewVehicle, cameraSettings.heading)
+        SetVehicleOnGroundProperly(previewVehicle)
+        -- Don't use PointCamAtEntity - let rotation values control the camera angle
+    end
+end
+
+-- Stop preview mode
+function StopPreviewMode()
+    isPreviewMode = false
+    
+    -- Cleanup preview vehicle
+    if previewVehicle and DoesEntityExist(previewVehicle) then
+        DeleteEntity(previewVehicle)
+        previewVehicle = nil
+    end
+    
+    -- Cleanup camera
+    if previewCamera then
+        RenderScriptCams(false, false, 0, true, true)
+        DestroyCam(previewCamera, false)
+        previewCamera = nil
+    end
+    
+    -- Show HUD
+    DisplayRadar(true)
+    DisplayHud(true)
+    
+    -- Make player visible
+    local playerPed = PlayerPedId()
+    SetEntityVisible(playerPed, true, false)
+    
+    print('^3[POW Vehicle Capture]^7 Preview mode stopped')
+end
 
