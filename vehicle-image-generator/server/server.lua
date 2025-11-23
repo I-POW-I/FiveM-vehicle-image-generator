@@ -92,6 +92,62 @@ RegisterCommand('clearimages', function(source, args, rawCommand)
     end
 end, false)
 
+-- Save camera settings to config.lua
+RegisterNetEvent('vehicle-image-generator:saveConfig')
+AddEventHandler('vehicle-image-generator:saveConfig', function(cameraSettings)
+    local src = source
+    
+    if not cameraSettings then
+        TriggerClientEvent('vehicle-image-generator:notify', src, 'Invalid camera settings', 'error')
+        return
+    end
+    
+    -- Read current config file
+    local configPath = 'config.lua'
+    local configData = LoadResourceFile(GetCurrentResourceName(), configPath)
+    
+    if not configData then
+        TriggerClientEvent('vehicle-image-generator:notify', src, 'Failed to read config.lua', 'error')
+        return
+    end
+    
+    -- Build new camera settings string
+    local newCameraSettings = string.format([[Config.CameraSettings = {
+    coords = vector3(%.4f, %.4f, %.4f), -- Where vehicles spawn
+    heading = %.1f, -- Vehicle heading
+    cameraOffset = vector3(%.1f, %.1f, %.1f), -- Camera position, front-left elevated
+    cameraRotation = vector3(%.1f, %.1f, %.1f), -- Camera angle, for front 3/4 view
+    fov = %.1f -- Field of view
+}]], 
+        cameraSettings.coords.x, cameraSettings.coords.y, cameraSettings.coords.z,
+        cameraSettings.heading,
+        cameraSettings.cameraOffset.x, cameraSettings.cameraOffset.y, cameraSettings.cameraOffset.z,
+        cameraSettings.cameraRotation.x, cameraSettings.cameraRotation.y, cameraSettings.cameraRotation.z,
+        cameraSettings.fov
+    )
+    
+    -- Replace the camera settings section in config (matches multi-line with nested braces)
+    local pattern = "Config%.CameraSettings%s*=%s*%b{}"
+    local updatedConfig = configData:gsub(pattern, newCameraSettings)
+    
+    -- Save updated config
+    local success = SaveResourceFile(GetCurrentResourceName(), configPath, updatedConfig, -1)
+    
+    if success then
+        -- Update runtime config
+        Config.CameraSettings.coords = vector3(cameraSettings.coords.x, cameraSettings.coords.y, cameraSettings.coords.z)
+        Config.CameraSettings.heading = cameraSettings.heading
+        Config.CameraSettings.cameraOffset = vector3(cameraSettings.cameraOffset.x, cameraSettings.cameraOffset.y, cameraSettings.cameraOffset.z)
+        Config.CameraSettings.cameraRotation = vector3(cameraSettings.cameraRotation.x, cameraSettings.cameraRotation.y, cameraSettings.cameraRotation.z)
+        Config.CameraSettings.fov = cameraSettings.fov
+        
+        TriggerClientEvent('vehicle-image-generator:notify', src, 'Camera settings saved to config.lua!', 'success')
+        print('^2[POW Vehicle Image Generator]^7 Camera settings saved by player ' .. src)
+    else
+        TriggerClientEvent('vehicle-image-generator:notify', src, 'Failed to save config.lua', 'error')
+    end
+end)
+
 print('^2========================================^7')
 print('^2POW Vehicle Image Generator^7')
 print('^3Version:^7 1.0.0')
