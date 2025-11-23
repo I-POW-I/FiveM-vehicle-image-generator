@@ -29,6 +29,112 @@
                 <button class="test-btn" id="testWebhook">TEST WEBHOOK</button>
             </div>
 
+            <!-- Camera Settings Section -->
+            <div class="section">
+                <div class="section-header collapsible" id="cameraHeader">
+                    <svg class="section-icon" viewBox="0 0 24 24" fill="none">
+                        <path d="M17 10.5V7C17 6.45 16.55 6 16 6H4C3.45 6 3 6.45 3 7V17C3 17.55 3.45 18 4 18H16C16.55 18 17 17.55 17 17V13.5L21 17.5V6.5L17 10.5Z" fill="white"/>
+                    </svg>
+                    <h2>Camera Settings</h2>
+                    <span class="collapse-icon">▼</span>
+                </div>
+                <div class="camera-content" id="cameraContent">
+                    <!-- Spawn Coords -->
+                    <div class="setting-group">
+                        <label class="setting-label">Spawn Coordinates</label>
+                        <div class="setting-row">
+                            <span class="coord-label">X:</span>
+                            <input type="number" id="spawnX" class="coord-input" step="0.1" min="-3000" max="3000" />
+                            <input type="range" id="spawnXSlider" class="coord-slider" min="-3000" max="3000" step="0.1" />
+                        </div>
+                        <div class="setting-row">
+                            <span class="coord-label">Y:</span>
+                            <input type="number" id="spawnY" class="coord-input" step="0.1" min="-3000" max="3000" />
+                            <input type="range" id="spawnYSlider" class="coord-slider" min="-3000" max="3000" step="0.1" />
+                        </div>
+                        <div class="setting-row">
+                            <span class="coord-label">Z:</span>
+                            <input type="number" id="spawnZ" class="coord-input" step="0.1" min="0" max="1000" />
+                            <input type="range" id="spawnZSlider" class="coord-slider" min="0" max="1000" step="0.1" />
+                        </div>
+                    </div>
+
+                    <!-- Vehicle Heading -->
+                    <div class="setting-group">
+                        <label class="setting-label">Vehicle Heading</label>
+                        <div class="setting-row">
+                            <input type="number" id="heading" class="coord-input" step="0.1" min="0" max="360" />
+                            <input type="range" id="headingSlider" class="coord-slider" min="0" max="360" step="0.1" />
+                        </div>
+                    </div>
+
+                    <!-- Camera Offset -->
+                    <div class="setting-group">
+                        <label class="setting-label">Camera Offset</label>
+                        <div class="setting-row">
+                            <span class="coord-label">X:</span>
+                            <input type="number" id="camOffsetX" class="coord-input" step="0.1" min="-100" max="100" />
+                            <input type="range" id="camOffsetXSlider" class="coord-slider" min="-100" max="100" step="0.1" />
+                        </div>
+                        <div class="setting-row">
+                            <span class="coord-label">Y:</span>
+                            <input type="number" id="camOffsetY" class="coord-input" step="0.1" min="-100" max="100" />
+                            <input type="range" id="camOffsetYSlider" class="coord-slider" min="-100" max="100" step="0.1" />
+                        </div>
+                        <div class="setting-row">
+                            <span class="coord-label">Z:</span>
+                            <input type="number" id="camOffsetZ" class="coord-input" step="0.1" min="-100" max="100" />
+                            <input type="range" id="camOffsetZSlider" class="coord-slider" min="-100" max="100" step="0.1" />
+                        </div>
+                    </div>
+
+                    <!-- Camera Rotation -->
+                    <div class="setting-group">
+                        <label class="setting-label">Camera Rotation</label>
+                        <div class="setting-row">
+                            <span class="coord-label">X:</span>
+                            <input type="number" id="camRotX" class="coord-input" step="0.1" min="-360" max="360" />
+                            <input type="range" id="camRotXSlider" class="coord-slider" min="-360" max="360" step="0.1" />
+                        </div>
+                        <div class="setting-row">
+                            <span class="coord-label">Y:</span>
+                            <input type="number" id="camRotY" class="coord-input" step="0.1" min="-360" max="360" />
+                            <input type="range" id="camRotYSlider" class="coord-slider" min="-360" max="360" step="0.1" />
+                        </div>
+                        <div class="setting-row">
+                            <span class="coord-label">Z:</span>
+                            <input type="number" id="camRotZ" class="coord-input" step="0.1" min="-360" max="360" />
+                            <input type="range" id="camRotZSlider" class="coord-slider" min="-360" max="360" step="0.1" />
+                        </div>
+                    </div>
+
+                    <!-- FOV -->
+                    <div class="setting-group">
+                        <label class="setting-label">Field of View (FOV)</label>
+                        <div class="setting-row">
+                            <input type="number" id="fov" class="coord-input" step="0.1" min="10" max="120" />
+                            <input type="range" id="fovSlider" class="coord-slider" min="10" max="120" step="0.1" />
+                        </div>
+                    </div>
+
+                    <!-- Camera Control Buttons -->
+                    <div class="camera-buttons">
+                        <button class="preview-btn" id="previewBtn">
+                            <span class="btn-icon">👁</span>
+                            PREVIEW
+                        </button>
+                        <button class="reset-btn" id="resetBtn">
+                            <span class="btn-icon">↺</span>
+                            RESET
+                        </button>
+                    </div>
+                    <button class="save-config-btn" id="saveConfigBtn">
+                        <span class="btn-icon">💾</span>
+                        SAVE TO CONFIG.LUA
+                    </button>
+                </div>
+            </div>
+
             <!-- Vehicle Selection Section -->
             <div class="section">
                 <div class="section-header">
