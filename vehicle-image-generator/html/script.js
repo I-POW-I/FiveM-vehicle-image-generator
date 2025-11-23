@@ -1,6 +1,9 @@
 let vehicleCategories = [];
 let isCapturing = false;
 let selectedVehicles = [];
+let isPreviewActive = false;
+let originalCameraSettings = {};
+let currentCameraSettings = {};
 
 // Initialize
 window.addEventListener('message', function(event) {
@@ -14,6 +17,13 @@ window.addEventListener('message', function(event) {
         // Load saved webhook
         if (data.webhook) {
             document.getElementById('webhookInput').value = data.webhook;
+        }
+
+        // Load camera settings from config
+        if (data.cameraSettings) {
+            originalCameraSettings = JSON.parse(JSON.stringify(data.cameraSettings));
+            currentCameraSettings = JSON.parse(JSON.stringify(data.cameraSettings));
+            loadCameraSettings(currentCameraSettings);
         }
     } else if (data.action === 'close') {
         document.body.classList.remove('visible');
@@ -117,6 +127,14 @@ document.getElementById('startCapture').addEventListener('click', function() {
         showNotification('Please select at least one vehicle', 'error');
         return;
     }
+
+    // Stop preview mode if active before starting capture
+    if (isPreviewActive) {
+        isPreviewActive = false;
+        document.getElementById('previewBtn').classList.remove('active');
+        document.getElementById('previewBtn').innerHTML = '<span class="btn-icon">👁</span>PREVIEW';
+        stopPreview();
+    }
     
     selectedVehicles = [];
     checkboxes.forEach(cb => {
@@ -131,6 +149,9 @@ document.getElementById('startCapture').addEventListener('click', function() {
     document.getElementById('startCapture').disabled = true;
     document.getElementById('stopCapture').disabled = false;
     document.getElementById('progressSection').style.display = 'block';
+
+    // Get current camera settings (in case user modified them)
+    const cameraSettings = getCurrentCameraSettings();
     
     fetch(`https://vehicle-image-generator/startCapture`, {
         method: 'POST',
@@ -139,7 +160,8 @@ document.getElementById('startCapture').addEventListener('click', function() {
         },
         body: JSON.stringify({
             webhook: webhook,
-            vehicles: selectedVehicles
+            vehicles: selectedVehicles,
+            cameraSettings: cameraSettings
         })
     });
 });
@@ -212,3 +234,188 @@ document.addEventListener('keydown', function(event) {
 
 // Initialize buttons state
 document.getElementById('stopCapture').disabled = true;
+
+// ========================================
+// CAMERA SETTINGS FUNCTIONALITY
+// ========================================
+
+// Load camera settings into UI
+function loadCameraSettings(settings) {
+    // Spawn coords
+    document.getElementById('spawnX').value = settings.coords.x;
+    document.getElementById('spawnXSlider').value = settings.coords.x;
+    document.getElementById('spawnY').value = settings.coords.y;
+    document.getElementById('spawnYSlider').value = settings.coords.y;
+    document.getElementById('spawnZ').value = settings.coords.z;
+    document.getElementById('spawnZSlider').value = settings.coords.z;
+
+    // Heading
+    document.getElementById('heading').value = settings.heading;
+    document.getElementById('headingSlider').value = settings.heading;
+
+    // Camera offset
+    document.getElementById('camOffsetX').value = settings.cameraOffset.x;
+    document.getElementById('camOffsetXSlider').value = settings.cameraOffset.x;
+    document.getElementById('camOffsetY').value = settings.cameraOffset.y;
+    document.getElementById('camOffsetYSlider').value = settings.cameraOffset.y;
+    document.getElementById('camOffsetZ').value = settings.cameraOffset.z;
+    document.getElementById('camOffsetZSlider').value = settings.cameraOffset.z;
+
+    // Camera rotation
+    document.getElementById('camRotX').value = settings.cameraRotation.x;
+    document.getElementById('camRotXSlider').value = settings.cameraRotation.x;
+    document.getElementById('camRotY').value = settings.cameraRotation.y;
+    document.getElementById('camRotYSlider').value = settings.cameraRotation.y;
+    document.getElementById('camRotZ').value = settings.cameraRotation.z;
+    document.getElementById('camRotZSlider').value = settings.cameraRotation.z;
+
+    // FOV
+    document.getElementById('fov').value = settings.fov;
+    document.getElementById('fovSlider').value = settings.fov;
+}
+
+// Get current camera settings from UI
+function getCurrentCameraSettings() {
+    return {
+        coords: {
+            x: parseFloat(document.getElementById('spawnX').value),
+            y: parseFloat(document.getElementById('spawnY').value),
+            z: parseFloat(document.getElementById('spawnZ').value)
+        },
+        heading: parseFloat(document.getElementById('heading').value),
+        cameraOffset: {
+            x: parseFloat(document.getElementById('camOffsetX').value),
+            y: parseFloat(document.getElementById('camOffsetY').value),
+            z: parseFloat(document.getElementById('camOffsetZ').value)
+        },
+        cameraRotation: {
+            x: parseFloat(document.getElementById('camRotX').value),
+            y: parseFloat(document.getElementById('camRotY').value),
+            z: parseFloat(document.getElementById('camRotZ').value)
+        },
+        fov: parseFloat(document.getElementById('fov').value)
+    };
+}
+
+// Sync slider and input
+function syncInputs(inputId, sliderId) {
+    const input = document.getElementById(inputId);
+    const slider = document.getElementById(sliderId);
+
+    input.addEventListener('input', function() {
+        const value = parseFloat(this.value);
+        const min = parseFloat(slider.min);
+        const max = parseFloat(slider.max);
+        
+        // Clamp value to slider range
+        if (value >= min && value <= max) {
+            slider.value = value;
+        }
+        
+        currentCameraSettings = getCurrentCameraSettings();
+        if (isPreviewActive) {
+            updatePreview();
+        }
+    });
+
+    slider.addEventListener('input', function() {
+        input.value = this.value;
+        currentCameraSettings = getCurrentCameraSettings();
+        if (isPreviewActive) {
+            updatePreview();
+        }
+    });
+}
+
+// Setup all slider/input syncing
+syncInputs('spawnX', 'spawnXSlider');
+syncInputs('spawnY', 'spawnYSlider');
+syncInputs('spawnZ', 'spawnZSlider');
+syncInputs('heading', 'headingSlider');
+syncInputs('camOffsetX', 'camOffsetXSlider');
+syncInputs('camOffsetY', 'camOffsetYSlider');
+syncInputs('camOffsetZ', 'camOffsetZSlider');
+syncInputs('camRotX', 'camRotXSlider');
+syncInputs('camRotY', 'camRotYSlider');
+syncInputs('camRotZ', 'camRotZSlider');
+syncInputs('fov', 'fovSlider');
+
+// Collapsible camera section
+document.getElementById('cameraHeader').addEventListener('click', function() {
+    this.classList.toggle('collapsed');
+    document.getElementById('cameraContent').classList.toggle('collapsed');
+});
+
+// Preview button
+document.getElementById('previewBtn').addEventListener('click', function() {
+    isPreviewActive = !isPreviewActive;
+    this.classList.toggle('active');
+    this.innerHTML = isPreviewActive 
+        ? '<span class="btn-icon">⏹</span>STOP PREVIEW' 
+        : '<span class="btn-icon">👁</span>PREVIEW';
+
+    if (isPreviewActive) {
+        startPreview();
+    } else {
+        stopPreview();
+    }
+});
+
+// Reset button
+document.getElementById('resetBtn').addEventListener('click', function() {
+    currentCameraSettings = JSON.parse(JSON.stringify(originalCameraSettings));
+    loadCameraSettings(currentCameraSettings);
+    if (isPreviewActive) {
+        updatePreview();
+    }
+    showNotification('Camera settings reset to original values', 'success');
+});
+
+// Save to config button
+document.getElementById('saveConfigBtn').addEventListener('click', function() {
+    const settings = getCurrentCameraSettings();
+    
+    fetch(`https://vehicle-image-generator/saveConfig`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ cameraSettings: settings })
+    });
+});
+
+// Start preview mode
+function startPreview() {
+    const settings = getCurrentCameraSettings();
+    fetch(`https://vehicle-image-generator/startPreview`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ cameraSettings: settings })
+    });
+}
+
+// Update preview with new settings
+function updatePreview() {
+    const settings = getCurrentCameraSettings();
+    fetch(`https://vehicle-image-generator/updatePreview`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ cameraSettings: settings })
+    });
+}
+
+// Stop preview mode
+function stopPreview() {
+    fetch(`https://vehicle-image-generator/stopPreview`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({})
+    });
+}
+
