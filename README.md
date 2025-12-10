@@ -16,7 +16,7 @@ Capture vehicle screenshots for your FiveM server and upload them to Discord.
 
 ## Dependencies
 
-- `screenshot-basic` (included with FiveM)
+- `screenshot-basic`
 
 **1. Installation**
 ```
@@ -40,9 +40,9 @@ Config.VehicleSpawnCodes = {
 
 **4. Restart server**
 
-## Usage
-
-Type `/vehui` in-game
+**Commands:**
+- Input '/vehui' in game to open the NUI for the script
+- Input 'clearimages' into your TxAdmin live console to remove all taken images from the .JSON file
 
 1. Paste your Discord webhook URL
 2. Adjust camera if needed (use the sliders)
@@ -126,9 +126,18 @@ Config.CameraSettings = {
 
 ## Support
 
-Issues? Check the config file first.  
-Still stuck? Figure it out. xD
+Current Issues >
+- Saving NUI settings to config don't appear to be working correctly.
+- Players MUST be on solid ground when running the script & taking images.
+- All players in the server MUST be near where the car spawns otherwise textures bug out.
+- Make sure you're not in no clip & don't have a gun in your hands.
+- After closing the NUI the settings don't save.
+- The script must be restarted if you click on the stop capture button.
+- The script can easily take around 50-80 images at a time (Don't over work it at one time)
+
+Still stuck & having issues?... Figure it out or wait until I get around to looking into the issues. xD
 
 ---
 
 Made by POW
+
